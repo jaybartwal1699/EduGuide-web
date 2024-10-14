@@ -34,17 +34,10 @@ export default function LoginScreen({ navigation }) {
         await AsyncStorage.setItem('userType', userType);
         await AsyncStorage.setItem('name', name);
 
-        if (userType === 'admin') {
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'AdminDrawer' }],
-          });
-        } else {
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'StudentDrawer' }],
-          });
-        }
+        navigation.reset({
+          index: 0,
+          routes: [{ name: userType === 'admin' ? 'AdminDrawer' : 'StudentDrawer' }],
+        });
       }
     } catch (error) {
       setError('Login failed. Check your credentials.');
@@ -57,9 +50,7 @@ export default function LoginScreen({ navigation }) {
   return (
     <ScrollView contentContainerStyle={styles.scrollView}>
       <View style={styles.container}>
-        <Text style={styles.title}>
-          EduGuide - College Recommendation App
-        </Text>
+        <Text style={styles.title}>EduGuide - College Recommendation App</Text>
 
         <Card style={styles.card}>
           <Card.Content>
@@ -86,9 +77,7 @@ export default function LoginScreen({ navigation }) {
               theme={{ colors: { primary: '#6200ea' } }}
             />
 
-            {error ? (
-              <RNText style={styles.errorText}>{error}</RNText>
-            ) : null}
+            {error ? <RNText style={styles.errorText}>{error}</RNText> : null}
 
             <Button
               mode="contained"
@@ -110,13 +99,10 @@ export default function LoginScreen({ navigation }) {
             >
               Don't have an account? Register
             </Button>
-
           </Card.Content>
         </Card>
 
-        <Text style={styles.footerText}>
-          All rights reserved 2023-24 by Jay Bartwal & Sujal
-        </Text>
+        <Text style={styles.footerText}>All rights reserved 2023-24 by Jay Bartwal & Sujal</Text>
       </View>
     </ScrollView>
   );
@@ -139,6 +125,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   card: {
+    maxWidth: 400,
+    alignSelf: 'center',
     padding: 30,
     borderRadius: 15,
     backgroundColor: '#FFFFFF',
@@ -185,149 +173,3 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 });
-
-
-
-
-// Old Layot code 
-
-// import React, { useState } from 'react';
-// import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from 'react-native';
-// import axios from 'axios';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
-
-// export default function LoginScreen({ navigation }) {
-//   const [email, setEmail] = useState('');
-//   const [password, setPassword] = useState('');
-//   const [loading, setLoading] = useState(false);
-
-//   const handleLogin = async () => {
-//     if (!email || !password) {
-//       Alert.alert('Error', 'Please fill out all fields.');
-//       return;
-//     }
-
-//     setLoading(true);
-
-//     try {
-//       // Make sure the URL is correct
-//       const response = await axios.post('http://x.x.x.x:5000/api/login', { // Replace with your actual URL
-//         email,
-//         password,
-//       });
-
-//       if (response.status === 200) {
-//         const { token, userType, name } = response.data;
-
-//         // Save token and email in AsyncStorage
-//         await AsyncStorage.setItem('token', token);
-//         await AsyncStorage.setItem('email', email); // Save email for fetching user details
-//         await AsyncStorage.setItem('userType', userType);
-//         await AsyncStorage.setItem('name', name); // Save user name if needed
-
-//         // Debug: Check what is stored in AsyncStorage
-//         const storedToken = await AsyncStorage.getItem('token');
-//         const storedEmail = await AsyncStorage.getItem('email');
-//         const storedUserType = await AsyncStorage.getItem('userType');
-//         const storedName = await AsyncStorage.getItem('name');
-//         console.log('Stored Token:', storedToken);
-//         console.log('Stored Email:', storedEmail);
-//         console.log('Stored UserType:', storedUserType);
-//         console.log('Stored Name:', storedName);
-
-//         // Navigate based on user type
-//         if (userType === 'admin') {
-//           navigation.reset({
-//             index: 0,
-//             routes: [{ name: 'AdminDrawer' }],
-//           });
-//         } else {
-//           navigation.reset({
-//             index: 0,
-//             routes: [{ name: 'StudentDrawer' }],
-//           });
-//         }
-//       }
-//     } catch (error) {
-//       Alert.alert('Error', 'Login failed. Check your credentials.');
-//       console.error('Login error:', error); // Log error for debugging
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   return (
-//     <View style={styles.container}>
-//       <Text style={styles.header}>EduGuide</Text>
-//       <TextInput
-//         style={styles.input}
-//         placeholder="Email"
-//         keyboardType="email-address"
-//         value={email}
-//         onChangeText={(text) => setEmail(text)}
-//       />
-//       <TextInput
-//         style={styles.input}
-//         placeholder="Password"
-//         secureTextEntry
-//         value={password}
-//         onChangeText={(text) => setPassword(text)}
-//       />
-//       <TouchableOpacity
-//         style={styles.button}
-//         onPress={handleLogin}
-//         disabled={loading}
-//       >
-//         <Text style={styles.buttonText}>{loading ? 'Logging in...' : 'Login'}</Text>
-//       </TouchableOpacity>
-//       <TouchableOpacity
-//         style={styles.link}
-//         onPress={() => navigation.navigate('Register')}
-//       >
-//         <Text style={styles.linkText}>Don't have an account? Register</Text>
-//       </TouchableOpacity>
-//     </View>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     padding: 16,
-//     backgroundColor: '#fff',
-//   },
-//   header: {
-//     fontSize: 24,
-//     fontWeight: 'bold',
-//     marginBottom: 32,
-//     textAlign: 'center',
-//   },
-//   input: {
-//     height: 50,
-//     borderColor: '#ddd',
-//     borderWidth: 1,
-//     borderRadius: 8,
-//     marginBottom: 16,
-//     paddingHorizontal: 16,
-//     fontSize: 16,
-//   },
-//   button: {
-//     backgroundColor: '#007bff',
-//     paddingVertical: 12,
-//     borderRadius: 8,
-//     alignItems: 'center',
-//   },
-//   buttonText: {
-//     color: '#fff',
-//     fontSize: 18,
-//   },
-//   link: {
-//     marginTop: 16,
-//     alignItems: 'center',
-//   },
-//   linkText: {
-//     color: '#007bff',
-//     fontSize: 16,
-//   },
-// });

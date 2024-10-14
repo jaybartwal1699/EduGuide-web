@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
-import { ScrollView, View, StyleSheet, Text as RNText, Alert } from 'react-native'; // Add Alert here
+import { ScrollView, View, StyleSheet, Text as RNText, Alert } from 'react-native';
 import { Text, TextInput, Button, Card, Title, Divider, ActivityIndicator } from 'react-native-paper';
 import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
 import config from '../config';
 
-// Regular expression for validating email
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-// Regular expression for validating password (at least 6 characters, and contains both letters and numbers)
 const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
 
 export default function RegisterScreen({ navigation }) {
@@ -39,7 +37,7 @@ export default function RegisterScreen({ navigation }) {
       return false;
     }
 
-    setError(''); // Clear previous errors if validation passes
+    setError('');
     return true;
   };
 
@@ -47,10 +45,10 @@ export default function RegisterScreen({ navigation }) {
     if (!validateInputs()) return;
 
     setLoading(true);
-    setError(''); // Clear any previous errors
+    setError('');
 
     try {
-      const response = await axios.post(`https://node-app-zie2.onrender.com/api/register`, {
+      const response = await axios.post(`${config.SERVER_IP}/api/register`, {
         name,
         email,
         password,
@@ -58,20 +56,14 @@ export default function RegisterScreen({ navigation }) {
       });
 
       if (response.status === 201) {
-        Alert.alert('Success', 'Registered successfully'); // This is where Alert is used
+        Alert.alert('Success', 'Registered successfully');
         navigation.navigate('Login');
       } else {
         setError('Unexpected response from the server. Please try again.');
       }
     } catch (error) {
       if (error.response) {
-        if (error.response.status === 400) {
-          setError(error.response.data.message || 'Invalid input. Please try again.');
-        } else {
-          setError('Registration failed. Please try again.');
-        }
-      } else if (error.request) {
-        setError('Network error. Please check your connection.');
+        setError(error.response.data.message || 'Registration failed. Please try again.');
       } else {
         setError('An unexpected error occurred. Please try again.');
       }
@@ -128,9 +120,7 @@ export default function RegisterScreen({ navigation }) {
               </Picker>
             </View>
 
-            {error ? (
-              <RNText style={styles.errorText}>{error}</RNText>
-            ) : null}
+            {error ? <RNText style={styles.errorText}>{error}</RNText> : null}
 
             <Button
               mode="contained"
@@ -169,6 +159,8 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   card: {
+    maxWidth: 400,
+    alignSelf: 'center',
     padding: 30,
     borderRadius: 15,
     backgroundColor: '#FFFFFF',
@@ -218,126 +210,3 @@ const styles = StyleSheet.create({
     color: '#6200ea',
   },
 });
-
-
-
-
-
-
-//Old Style Code & logic 
-
-// import React, { useState } from 'react';
-// import { View, StyleSheet, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
-// import { Picker } from '@react-native-picker/picker';  // Updated import
-// import axios from 'axios';  // Or use fetch if axios issues persist
-
-// export default function RegisterScreen({ navigation }) {
-//   const [name, setName] = useState('');
-//   const [email, setEmail] = useState('');
-//   const [password, setPassword] = useState('');
-//   const [userType, setUserType] = useState('student');
-
-//   const handleRegister = async () => {
-//     if (!name || !email || !password) {
-//       Alert.alert('Error', 'Please fill out all fields.');
-//       return;
-//     }
-
-//     try {
-//       const response = await axios.post('http://:5000/api/register', {
-//         name,
-//         email,
-//         password,
-//         userType,
-//       });
-
-//       if (response.status === 201) {
-//         Alert.alert('Success', 'Registered successfully');
-//         navigation.navigate('Login');
-//       }
-//     } catch (error) {
-//       Alert.alert('Error', 'Registration failed. Email might already be in use.');
-//     }
-//   };
-
-//   return (
-//     <View style={styles.container}>
-//       <Text style={styles.title}>Register</Text>
-//       <TextInput
-//         style={styles.input}
-//         placeholder="Name"
-//         value={name}
-//         onChangeText={setName}
-//       />
-//       <TextInput
-//         style={styles.input}
-//         placeholder="Email"
-//         keyboardType="email-address"
-//         value={email}
-//         onChangeText={setEmail}
-//       />
-//       <TextInput
-//         style={styles.input}
-//         placeholder="Password"
-//         secureTextEntry
-//         value={password}
-//         onChangeText={setPassword}
-//       />
-//       <Picker
-//         selectedValue={userType}
-//         style={styles.input}
-//         onValueChange={(itemValue) => setUserType(itemValue)}
-//       >
-//         <Picker.Item label="Student" value="student" />
-//         <Picker.Item label="Admin" value="admin" />
-//       </Picker>
-//       <TouchableOpacity style={styles.button} onPress={handleRegister}>
-//         <Text style={styles.buttonText}>Register</Text>
-//       </TouchableOpacity>
-//       <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-//         <Text style={styles.switchText}>Already have an account? Login here</Text>
-//       </TouchableOpacity>
-//     </View>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     paddingHorizontal: 20,
-//     backgroundColor: '#f5f5f5',
-//   },
-//   title: {
-//     fontSize: 28,
-//     fontWeight: 'bold',
-//     textAlign: 'center',
-//     marginBottom: 20,
-//     color: '#333',
-//   },
-//   input: {
-//     height: 50,
-//     borderColor: '#ccc',
-//     borderWidth: 1,
-//     borderRadius: 5,
-//     paddingHorizontal: 15,
-//     marginBottom: 15,
-//     backgroundColor: '#fff',
-//   },
-//   button: {
-//     height: 50,
-//     backgroundColor: '#6200ea',
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     borderRadius: 5,
-//     marginBottom: 15,
-//   },
-//   buttonText: {
-//     color: '#fff',
-//     fontSize: 18,
-//   },
-//   switchText: {
-//     textAlign: 'center',
-//     color: '#6200ea',
-//   },
-// });
